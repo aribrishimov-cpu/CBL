@@ -55,6 +55,11 @@ public class Player extends JComponent {
         g.fillRect(x, y, playerSize, playerSize);
     }
 
-    public int getTileX() { return tileX; }
-    public int getTileY() { return tileY; }
+    public int getTileX() {
+        return tileX;
+    }
+
+    public int getTileY() {
+        return tileY;
+    }
 }
