@@ -5,83 +5,88 @@ import javax.swing.*;
 public class MapPanel extends JPanel {
     private final int tileSize = 64;
     private Map map;
-
-    private int playerX = 5;
-    private int playerY = 5;
+    private Player player;
+    private int frontX = -1;
+    private int frontY = -1;
 
     public MapPanel(Map map) {
         this.map = map;
+        this.player = new Player(5, 5);
         setPreferredSize(new Dimension(map.getWidth() * tileSize, map.getHeight() * tileSize));
+        setFocusable(true);
+        setRequestFocusEnabled(true);
+        addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                requestFocusInWindow();
+            }
+        });
 
-        setFocusable(true);           
-        requestFocusInWindow();      
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                movePlayer(e);
+                handleKey(e);
+                updateFrontTile();
+                repaint();
             }
         });
+
+        updateFrontTile();
     }
 
-    private void movePlayer(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        int newX = playerX;
-        int newY = playerY;
-
-        switch (key) {
-            case KeyEvent.VK_LEFT -> newX--;
-            case KeyEvent.VK_RIGHT -> newX++;
-            case KeyEvent.VK_UP -> newY--;
-            case KeyEvent.VK_DOWN -> newY++;
+    private void handleKey(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT -> player.move(Direction.LEFT, map);
+            case KeyEvent.VK_RIGHT -> player.move(Direction.RIGHT, map);
+            case KeyEvent.VK_UP -> player.move(Direction.UP, map);
+            case KeyEvent.VK_DOWN -> player.move(Direction.DOWN, map);
         }
+    }
 
-        if (newX >= 0 && newX < map.getWidth() && newY >= 0 && newY < map.getHeight()) {
-            if (map.getTiles()[newY][newX] == TileType.empty) {
-                playerX = newX;
-                playerY = newY;
-            }
+    private void updateFrontTile() {
+        frontX = player.getTileX();
+        frontY = player.getTileY();
+
+        switch (player.getFacing()) {
+            case UP -> frontY--;
+            case DOWN -> frontY++;
+            case LEFT -> frontX--;
+            case RIGHT -> frontX++;
         }
-
-        repaint(); 
+        
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        TileType[][] tiles = map.getTiles();
+        // Draw map
         for (int y = 0; y < map.getHeight(); y++) {
             for (int x = 0; x < map.getWidth(); x++) {
-                drawTile(g, tiles[y][x], x * tileSize, y * tileSize);
+                TileType type = map.getTiles()[y][x];
+                g.setColor(switch(type) {
+                    case empty -> Color.LIGHT_GRAY;
+                    case choppingBoard -> Color.ORANGE;
+                    case pan -> Color.RED;
+                    case trashBin -> Color.BLACK;
+                    case tomatoBox -> Color.PINK;
+                    case lettuceBox -> Color.GREEN;
+                    case meatBox -> Color.MAGENTA;
+                    case bunBox -> Color.YELLOW;
+                    case orderSubmit -> Color.WHITE;
+                    case counterTop -> Color.BLUE;
+                });
+                g.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                g.setColor(Color.DARK_GRAY);
+                g.drawRect(x * tileSize, y * tileSize, tileSize, tileSize);
             }
         }
+        //Highlight the tile in front
+        g.setColor(new Color(255, 255, 0, 128));
+        g.fillRect(frontX * tileSize, frontY * tileSize, tileSize, tileSize);
 
-        drawPlayer(g);
-    }
-
-    private void drawTile(Graphics g, TileType type, int x, int y) {
-        switch (type) {
-            case empty -> g.setColor(Color.LIGHT_GRAY);
-            case choppingBoard -> g.setColor(Color.ORANGE);
-            case pan -> g.setColor(Color.RED);
-            case trashBin -> g.setColor(Color.BLACK);
-            case tomatoBox -> g.setColor(Color.PINK);
-            case lettuceBox -> g.setColor(Color.GREEN);
-            case meatBox -> g.setColor(Color.MAGENTA);
-            case bunBox -> g.setColor(Color.YELLOW);
-            case orderSubmit -> g.setColor(Color.WHITE);
-            case counterTop -> g.setColor(Color.BLUE);
-        }
-        g.fillRect(x, y, tileSize, tileSize);
-        g.setColor(Color.DARK_GRAY);
-        g.drawRect(x, y, tileSize, tileSize);
-    }
-
-    private void drawPlayer(Graphics g) {
+        //Draw the Player
         int playerSize = 40;
-        int x = playerX * tileSize + (tileSize - playerSize) / 2;
-        int y = playerY * tileSize + (tileSize - playerSize) / 2;
+        int x = player.getTileX() * tileSize + (tileSize - playerSize) / 2;
+        int y = player.getTileY() * tileSize + (tileSize - playerSize) / 2;
         g.setColor(Color.BLACK);
         g.fillRect(x, y, playerSize, playerSize);
     }
