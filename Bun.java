@@ -1,15 +1,11 @@
 /*
  * Class for the buns in the game.
  */
-public class Bun {
-    private String name;
+public class Bun extends Ingredient {
 
     public Bun(String name) {
-        this.name = name;
+        super(name);
     }
 
-    public String getName(){
-        return name;
-    }
     
 }

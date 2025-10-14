@@ -3,7 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class MapPanel extends JPanel {
-    private final int TILE_SIZE = 64;
+    private final int tileSize = 64;
     private Map map;
 
     private int playerX = 5;
@@ -11,7 +11,7 @@ public class MapPanel extends JPanel {
 
     public MapPanel(Map map) {
         this.map = map;
-        setPreferredSize(new Dimension(map.getWidth() * TILE_SIZE, map.getHeight() * TILE_SIZE));
+        setPreferredSize(new Dimension(map.getWidth() * tileSize, map.getHeight() * tileSize));
 
         setFocusable(true);           
         requestFocusInWindow();      
@@ -53,7 +53,7 @@ public class MapPanel extends JPanel {
         TileType[][] tiles = map.getTiles();
         for (int y = 0; y < map.getHeight(); y++) {
             for (int x = 0; x < map.getWidth(); x++) {
-                drawTile(g, tiles[y][x], x * TILE_SIZE, y * TILE_SIZE);
+                drawTile(g, tiles[y][x], x * tileSize, y * tileSize);
             }
         }
 
@@ -73,15 +73,15 @@ public class MapPanel extends JPanel {
             case orderSubmit -> g.setColor(Color.WHITE);
             case counterTop -> g.setColor(Color.BLUE);
         }
-        g.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+        g.fillRect(x, y, tileSize, tileSize);
         g.setColor(Color.DARK_GRAY);
-        g.drawRect(x, y, TILE_SIZE, TILE_SIZE);
+        g.drawRect(x, y, tileSize, tileSize);
     }
 
     private void drawPlayer(Graphics g) {
         int playerSize = 40;
-        int x = playerX * TILE_SIZE + (TILE_SIZE - playerSize) / 2;
-        int y = playerY * TILE_SIZE + (TILE_SIZE - playerSize) / 2;
+        int x = playerX * tileSize + (tileSize - playerSize) / 2;
+        int y = playerY * tileSize + (tileSize - playerSize) / 2;
         g.setColor(Color.BLACK);
         g.fillRect(x, y, playerSize, playerSize);
     }

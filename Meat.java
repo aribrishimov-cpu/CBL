@@ -1,13 +1,13 @@
 /*
  * Class for the meat ingredient in the game.
  */
-public class Meat extends Ingredient {
+public class Meat extends PrepIngredient {
     private boolean cooked;
 
     /**
      * Constructor for meat.
      */
-    public Meat(String name, boolean chopped) {
+    public Meat(String name) {
         super(name);
         cooked = false;
     }   
@@ -19,4 +19,5 @@ public class Meat extends Ingredient {
     public void cook() {
         this.cooked = true;
     }
+
 }
