@@ -1,7 +1,7 @@
 public class Map {
-    private final int width = 15;       
+    private final int width = 12;       
     private final int height = 10;      
-    private TileType[][] tiles;          
+    private TileType[][] tiles;        
 
     public Map() {
         tiles = new TileType[height][width];
