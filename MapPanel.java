@@ -8,10 +8,11 @@ public class MapPanel extends JPanel {
     private Player player;
     private int frontX = -1;
     private int frontY = -1;
+    private IngredientMap ingredientMap = new IngredientMap();
 
     public MapPanel(Map map) {
         this.map = map;
-        this.player = new Player(5, 5);
+        this.player = new Player(5, 5, ingredientMap, this);
         setPreferredSize(new Dimension(map.getWidth() * tileSize, map.getHeight() * tileSize));
         setFocusable(true);
         setRequestFocusEnabled(true);
@@ -39,6 +40,30 @@ public class MapPanel extends JPanel {
             case KeyEvent.VK_RIGHT -> player.move(Direction.RIGHT, map);
             case KeyEvent.VK_UP -> player.move(Direction.UP, map);
             case KeyEvent.VK_DOWN -> player.move(Direction.DOWN, map);
+            case KeyEvent.VK_Q -> {
+                if (map.getTile(frontX, frontY) == TileType.counterTop 
+                    || map.getTile(frontX, frontY) == TileType.pan
+                    || map.getTile(frontX, frontY) == TileType.choppingBoard
+                    || map.getTile(frontX, frontY) == TileType.orderSubmit) {
+                    player.drop();
+                    ingredientMap.printTiles();
+                } else {
+                    System.out.println("you cant drop this here");
+                }
+            }
+            case KeyEvent.VK_E -> {
+                if (map.getTile(frontX, frontY) == TileType.bunBox) {
+                    ingredientMap.fillTile(frontX, frontY, new Bun("bun1"));
+                } else if (map.getTile(frontX, frontY) == TileType.meatBox) {
+                    ingredientMap.fillTile(frontX, frontY, new Meat("meat1"));
+                } else if (map.getTile(frontX, frontY) == TileType.lettuceBox) {
+                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("lettuce1"));
+                } else if (map.getTile(frontX, frontY) == TileType.tomatoBox) {
+                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("tomato1"));
+                }
+                player.pickUp();  
+                ingredientMap.printTiles();
+            }
         }
     }
 
@@ -53,6 +78,14 @@ public class MapPanel extends JPanel {
             case RIGHT -> frontX++;
         }
         
+    }
+
+    public int getFrontX() {
+        return frontX;
+    }    
+
+    public int getFrontY() {
+        return frontY;
     }
 
     @Override
@@ -80,7 +113,7 @@ public class MapPanel extends JPanel {
             }
         }
         //Highlight the tile in front
-        g.setColor(new Color(255, 255, 0, 128));
+        g.setColor(new Color(255, 255, 0, 128));    
         g.fillRect(frontX * tileSize, frontY * tileSize, tileSize, tileSize);
 
         //Draw the Player

@@ -1,3 +1,6 @@
+import java.util.Timer;
+import java.util.TimerTask;
+
 /*
  * Class for the lettuce, tomato.
  */

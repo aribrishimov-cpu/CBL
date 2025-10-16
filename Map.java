@@ -31,6 +31,10 @@ public class Map {
         tiles[7][width - 1] = TileType.orderSubmit;
     }
 
+    public TileType getTile(int x, int y) {
+        return tiles[y][x];
+    }
+
     public TileType[][] getTiles() {
         return tiles;
     }
