@@ -9,6 +9,17 @@ public class MapPanel extends JPanel {
     private int frontX = -1;
     private int frontY = -1;
     private IngredientMap ingredientMap = new IngredientMap();
+    private Image bunImg;
+    private Image tomatoImg;
+    private Image lettuceImg;
+    private Image panImg;
+    private Image choppingImg;
+    private Image meatImg;
+    private Image choopedTomatoImg;
+    private Image choppedLettuceImg;
+    private Image choppedMeatImg;
+    private Image cookedMeatImg;
+    private int cntr = 0;
 
     public MapPanel(Map map) {
         this.map = map;
@@ -16,6 +27,18 @@ public class MapPanel extends JPanel {
         setPreferredSize(new Dimension(map.getWidth() * tileSize, map.getHeight() * tileSize));
         setFocusable(true);
         setRequestFocusEnabled(true);
+
+        bunImg = new ImageIcon("recources\\bun.png").getImage();
+        tomatoImg = new ImageIcon("recources\\tomato.png").getImage();
+        lettuceImg = new ImageIcon("recources\\lettuce.png").getImage();
+        meatImg = new ImageIcon("recources\\steak.png").getImage();
+        panImg = new ImageIcon("recources\\pan.png").getImage();
+        choppingImg = new ImageIcon("recources\\chopping_board.png").getImage();
+        choopedTomatoImg = new ImageIcon("recources\\chopped_tomato.png").getImage();
+        choppedLettuceImg = new ImageIcon("recources\\chopped_lettuce.png").getImage();
+        choppedMeatImg = new ImageIcon("recources\\chopped_steak.png").getImage();
+        cookedMeatImg = new ImageIcon("recources\\cooked_steak.png").getImage();
+
         addHierarchyListener(e -> {
             if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
                 requestFocusInWindow();
@@ -50,20 +73,46 @@ public class MapPanel extends JPanel {
                 } else {
                     System.out.println("you cant drop this here");
                 }
+
+                if (map.getTile(frontX, frontY) == TileType.pan) {
+                    Ingredient ing = ingredientMap.getTile(frontX, frontY);
+                    if (ing != null) {
+                        ing.cook(); // will only cook if chopped and not cooked yet
+                        if (ing.isCooked()) {
+                            System.out.println(ing.getName() + " is now cooked!");
+                        }
+                    }
+                }
             }
             case KeyEvent.VK_E -> {
                 if (map.getTile(frontX, frontY) == TileType.bunBox) {
-                    ingredientMap.fillTile(frontX, frontY, new Bun("bun1"));
+                    cntr++;
+                    ingredientMap.fillTile(frontX, frontY, new Bun("bun" + cntr));
                 } else if (map.getTile(frontX, frontY) == TileType.meatBox) {
-                    ingredientMap.fillTile(frontX, frontY, new Meat("meat1"));
+                    cntr++;
+                    ingredientMap.fillTile(frontX, frontY, new Meat("meat" + cntr));
                 } else if (map.getTile(frontX, frontY) == TileType.lettuceBox) {
-                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("lettuce1"));
+                    cntr++;
+                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("lettuce1" + cntr));
                 } else if (map.getTile(frontX, frontY) == TileType.tomatoBox) {
-                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("tomato1"));
+                    cntr++;
+                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("tomato1" + cntr));
                 }
                 player.pickUp();  
                 ingredientMap.printTiles();
             }
+            case KeyEvent.VK_SPACE -> {
+                Ingredient ing = ingredientMap.getTile(frontX, frontY);
+                TileType tile = map.getTile(frontX, frontY);
+
+                if (tile == TileType.choppingBoard && ing != null) {
+                    ing.chop();
+                    if (ing.isChopped()) {
+                        System.out.println(ing.getName() + " is now chopped!");
+                    }
+                } 
+            }
+
         }
     }
 
@@ -77,50 +126,176 @@ public class MapPanel extends JPanel {
             case LEFT -> frontX--;
             case RIGHT -> frontX++;
         }
-        
     }
 
-    public int getFrontX() {
-        return frontX;
+    public int getFrontX() { 
+        return frontX; 
     }    
 
-    public int getFrontY() {
-        return frontY;
+    public int getFrontY() { 
+        return frontY; 
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Draw map
+
+        // Draw map background and stations
         for (int y = 0; y < map.getHeight(); y++) {
             for (int x = 0; x < map.getWidth(); x++) {
                 TileType type = map.getTiles()[y][x];
-                g.setColor(switch(type) {
-                    case empty -> Color.LIGHT_GRAY;
-                    case choppingBoard -> Color.ORANGE;
-                    case pan -> Color.RED;
-                    case trashBin -> Color.BLACK;
-                    case tomatoBox -> Color.PINK;
-                    case lettuceBox -> Color.GREEN;
-                    case meatBox -> Color.MAGENTA;
-                    case bunBox -> Color.YELLOW;
-                    case orderSubmit -> Color.WHITE;
-                    case counterTop -> Color.BLUE;
-                });
+                Color tileColor;
+
+                switch (type) {
+                    case empty -> tileColor = Color.LIGHT_GRAY;
+                    case choppingBoard -> tileColor = Color.BLUE;
+                    case pan -> tileColor = Color.BLUE;
+                    case trashBin -> tileColor = Color.BLACK;
+                    case tomatoBox -> tileColor = Color.ORANGE;
+                    case lettuceBox -> tileColor = Color.ORANGE;
+                    case meatBox -> tileColor = Color.ORANGE;
+                    case bunBox -> tileColor = Color.ORANGE;
+                    case orderSubmit -> tileColor = Color.WHITE;
+                    case counterTop -> tileColor = Color.BLUE;
+                    default -> tileColor = Color.GRAY;
+                }
+
+                g.setColor(tileColor);
                 g.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
                 g.setColor(Color.DARK_GRAY);
                 g.drawRect(x * tileSize, y * tileSize, tileSize, tileSize);
+
+                // Draw icons for station tiles
+                Image icon = null;
+                switch (type) {
+                    case bunBox -> icon = bunImg;
+                    case lettuceBox -> icon = lettuceImg;
+                    case tomatoBox -> icon = tomatoImg;
+                    case meatBox -> icon = meatImg;
+                    case pan -> icon = panImg;
+                    case choppingBoard -> icon = choppingImg;
+                    default -> {
+                    }
+                }
+
+                if (icon != null) {
+                    int iconSize = (int) (tileSize * 0.8);
+                    int offset = (tileSize - iconSize) / 2;
+                    g.drawImage(icon, x * tileSize + offset, y * tileSize + offset,
+                        iconSize, iconSize, this);
+                }
             }
         }
-        //Highlight the tile in front
-        g.setColor(new Color(255, 255, 0, 128));    
+
+        // Draw every ingredient currently placed on the map
+        for (int y = 0; y < ingredientMap.getHeight(); y++) {
+            for (int x = 0; x < ingredientMap.getWidth(); x++) {
+                Ingredient ingredient = ingredientMap.getTile(x, y);
+
+                if (ingredient != null) {
+                    Image ingredientIcon = null;
+
+                    switch (ingredient.getClass().getSimpleName()) {
+                        case "Bun" -> ingredientIcon = bunImg;
+                        case "Meat" -> {
+                            if (ingredient.isChopped() && !ingredient.isCooked()) {
+                                ingredientIcon = choppedMeatImg;
+                            } else if (ingredient.isCooked()) {
+                                ingredientIcon = cookedMeatImg;
+                            } else {
+                                ingredientIcon = meatImg;
+                            }
+                        }
+                        case "PrepIngredient" -> {
+                            String name = ingredient.getName().toLowerCase();
+                            if (name.contains("tomato")) {
+                                if (ingredient.isChopped()) {
+                                    ingredientIcon = choopedTomatoImg;
+                                } else {
+                                    ingredientIcon = tomatoImg;
+                                }
+                            } else if (name.contains("lettuce")) {
+                                if (ingredient.isChopped()) {
+                                    ingredientIcon = choppedLettuceImg;
+                                } else {
+                                    ingredientIcon = lettuceImg;
+                                }
+                            }
+                        }
+                        default -> {
+                        }
+                    }
+
+                    if (ingredientIcon != null) {
+                        int iconSize = (int) (tileSize * 0.8);
+                        int offset = (tileSize - iconSize) / 2;
+                        g.drawImage(ingredientIcon, x * tileSize + offset, y * tileSize 
+                            + offset, iconSize, iconSize, this);
+                    }
+                }
+            }
+        }
+
+        // Highlight the tile in front of the player
+        g.setColor(new Color(255, 255, 0, 128));
         g.fillRect(frontX * tileSize, frontY * tileSize, tileSize, tileSize);
 
-        //Draw the Player
+        // Draw the player
         int playerSize = 40;
-        int x = player.getTileX() * tileSize + (tileSize - playerSize) / 2;
-        int y = player.getTileY() * tileSize + (tileSize - playerSize) / 2;
+        int px = player.getTileX() * tileSize + (tileSize - playerSize) / 2;
+        int py = player.getTileY() * tileSize + (tileSize - playerSize) / 2;
         g.setColor(Color.BLACK);
-        g.fillRect(x, y, playerSize, playerSize);
+        g.fillRect(px, py, playerSize, playerSize);
+
+        // Draw held item above the player
+        if (player.getHeldItem() != null) {
+            Ingredient held = player.getHeldItem();
+            Image heldIcon = null;
+
+            switch (held.getClass().getSimpleName()) {
+                case "Bun" -> heldIcon = bunImg;
+
+                case "Meat" -> {
+                    if (held.isChopped() && !held.isCooked()) {
+                        heldIcon = choppedMeatImg;
+                    } else if (held.isCooked()) {
+                        heldIcon = cookedMeatImg;
+                    } else {
+                        heldIcon = meatImg;
+                    }
+                }
+
+                case "PrepIngredient" -> {
+                    String name = held.getName().toLowerCase();
+                    if (name.contains("tomato")) {
+                        if (held.isChopped()) {
+                            heldIcon = choopedTomatoImg;
+                        } else {
+                            heldIcon = tomatoImg;
+                        }
+                    } else if (name.contains("lettuce")) {
+                        if (held.isChopped()) {
+                            heldIcon = choppedLettuceImg;
+                        } else {
+                            heldIcon = lettuceImg;
+                        }
+                    }
+                }
+
+                default -> { }
+            }
+
+            if (heldIcon != null) {
+                int iconSize = 24;
+                g.drawImage(
+                    heldIcon,
+                    px + (playerSize - iconSize) / 2,
+                    py - iconSize - 5,
+                    iconSize,
+                    iconSize,
+                    this
+                );
+            }
+        }
     }
 }

@@ -1,17 +1,17 @@
 public class PrepIngredient extends Ingredient {
-    private boolean chopped;
-
     public PrepIngredient(String name) {
         super(name);
-        chopped = false;
     }
 
-    public boolean isChopped() {
-        return chopped;
-    }
-
+    @Override
     public void chop() {
-        this.chopped = true;
+        if (!chopped) {
+            chopped = true;
+        }
     }
 
+    @Override
+    public void cook() {
+        // do nothing — these can’t be cooked
+    }
 }

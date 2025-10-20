@@ -76,7 +76,7 @@ public class Player {
             System.out.println("You dropped " + holdIngredient.getName());
             ingredientMap.fillTile(frontX, frontY, holdIngredient);
             holdIngredient = null;
-        } else if (holdIngredient == null){
+        } else if (holdIngredient == null) {
             System.out.println("You are not holding anything");
         } else {
             System.out.println("there is an ingredient already there");
@@ -94,5 +94,9 @@ public class Player {
 
     public int getTileY() {
         return tileY;
+    }
+
+    public Ingredient getHeldItem() {
+        return holdIngredient;
     }
 }
