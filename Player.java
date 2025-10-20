@@ -1,17 +1,20 @@
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+
 
 public class Player {
     private int tileX; 
     private int tileY; 
     private final int tileSize = 64;
     private Direction facing;
+    private Ingredient holdIngredient = null;
+    private MapPanel mapPanel;
+    private IngredientMap ingredientMap;
 
-    public Player(int startX, int startY) {
+    public Player(int startX, int startY, IngredientMap ingredientMap, MapPanel mapPanel) {
         this.tileX = startX;
         this.tileY = startY;
         this.facing = Direction.DOWN;
+        this.ingredientMap = ingredientMap;
+        this.mapPanel = mapPanel;
     
     }
 
@@ -48,6 +51,39 @@ public class Player {
         }
     }
 
+    public void pickUp() {
+        int frontX = mapPanel.getFrontX();
+        int frontY = mapPanel.getFrontY();
+        Ingredient ingredient = ingredientMap.getTile(frontX, frontY);
+
+        if (holdIngredient == null && ingredient != null) {
+            holdIngredient = ingredient;
+            ingredientMap.fillTile(frontX, frontY, null);
+            System.out.println("You picked up" + ingredient.getName());
+        } else if (holdIngredient != null) {
+            System.out.println("You are already holding something");
+        } else if (ingredient != null) {
+            System.out.println("there is no ingredient here");
+        }
+    }
+
+    public void drop() {
+        int frontX = mapPanel.getFrontX();
+        int frontY = mapPanel.getFrontY();
+        Ingredient ingredient = ingredientMap.getTile(frontX, frontY);
+
+        if (holdIngredient != null && ingredient == null) {
+            System.out.println("You dropped " + holdIngredient.getName());
+            ingredientMap.fillTile(frontX, frontY, holdIngredient);
+            holdIngredient = null;
+        } else if (holdIngredient == null) {
+            System.out.println("You are not holding anything");
+        } else {
+            System.out.println("there is an ingredient already there");
+        }
+    }
+
+    //Getters
     public Direction getFacing() {
         return facing;
     }
@@ -58,5 +94,9 @@ public class Player {
 
     public int getTileY() {
         return tileY;
+    }
+
+    public Ingredient getHeldItem() {
+        return holdIngredient;
     }
 }

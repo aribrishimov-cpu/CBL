@@ -1,12 +1,8 @@
-/*
- * Class for the lettuce, tomato.
- */
-public class Ingredient {
-    private String name;
+public abstract class Ingredient {
+    protected String name;
+    protected boolean chopped = false;
+    protected boolean cooked = false;
 
-    /**
-     * Construtor of an ingredient.
-     */
     public Ingredient(String name) {
         this.name = name;
     }
@@ -15,4 +11,19 @@ public class Ingredient {
         return name;
     }
 
+    public boolean isChopped() {
+        return chopped;
+    }
+
+    public boolean isCooked() {
+        return cooked;
+    }
+
+    public void chop() {
+        // Default: can’t be chopped unless overridden
+    }
+
+    public void cook() {
+        // Default: can’t be cooked unless overridden
+    }
 }

@@ -1,0 +1,43 @@
+[33mcommit 8838a86a5a06f87b3887823e2ace8be21eba8a80[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mitemInteraction[m[33m, [m[1;31morigin/itemInteraction[m[33m)[m
+Author: Ibrishimov <a.r.ibrishimov@student.tue.nl>
+Date:   Thu Oct 16 20:37:49 2025 +0200
+
+    did the item creating, picking up and dropping check terminal when runnin as the visual impleentation is not done
+
+[33mcommit d860253772ec1bab605548fbf808d85d8419b03f[m[33m ([m[1;32mmain[m[33m)[m
+Author: Ibrishimov <a.r.ibrishimov@student.tue.nl>
+Date:   Wed Oct 15 00:06:45 2025 +0200
+
+    same as the last one just deleted some unncesecary files
+
+[33mcommit 03e450dc8bf20d03783d88080aa8723d80e43c40[m
+Author: Ibrishimov <a.r.ibrishimov@student.tue.nl>
+Date:   Wed Oct 15 00:03:24 2025 +0200
+
+    cleaned the code to be more readable and integrated continious tracking of the front tile
+
+[33mcommit 5ff544b8539373563c1458aca58ac94e90a03217[m
+Author: Ibrishimov <a.r.ibrishimov@student.tue.nl>
+Date:   Tue Oct 14 20:20:36 2025 +0200
+
+    everything works i am trying to make the code simple and to fix the facing problem i i fuck up something return to this version
+
+[33mcommit 9ad8a2bb7ba79d8a575f7e4a01589e9dcc2ab227[m[33m ([m[1;32mPlayer[m[33m)[m
+Author: Ibrishimov <a.r.ibrishimov@student.tue.nl>
+Date:   Tue Oct 14 15:22:54 2025 +0200
+
+    added ingredient classes and picking up conditions based if the player holds anything
+
+[33mcommit 3f2dd7dfe2a2231f41b9c97ca64f5b44e142e69c[m[33m ([m[1;31morigin/Player[m[33m)[m
+Author: LJacobs07 <Lucjac2007@gmail.com>
+Date:   Mon Oct 13 22:30:54 2025 +0200
+
+    Add files via upload
+    
+    An added player character with movement, that is currently tilebased. Made to work together with the map.
+
+[33mcommit 6f83938f216b31788bf0f028ba9db3a78f3406dd[m
+Author: aribrishimov-cpu <aribrishimov@gmail.com>
+Date:   Thu Oct 9 11:46:51 2025 +0200
+
+    Add files via upload
