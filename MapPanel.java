@@ -286,7 +286,7 @@ public class MapPanel extends JPanel {
             }
 
             if (heldIcon != null) {
-                int iconSize = 24;
+                int iconSize = 30;
                 g.drawImage(
                     heldIcon,
                     px + (playerSize - iconSize) / 2,
