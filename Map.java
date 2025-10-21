@@ -1,7 +1,7 @@
 public class Map {
-    private final int width = 15;       
+    private final int width = 12;       
     private final int height = 10;      
-    private TileType[][] tiles;          
+    private TileType[][] tiles;        
 
     public Map() {
         tiles = new TileType[height][width];
@@ -29,10 +29,6 @@ public class Map {
         tiles[3][width - 1] = TileType.meatBox;
         tiles[6][width - 1] = TileType.orderSubmit;
         tiles[7][width - 1] = TileType.orderSubmit;
-    }
-
-    public TileType getTile(int x, int y) {
-        return tiles[y][x];
     }
 
     public TileType[][] getTiles() {
