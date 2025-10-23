@@ -4,7 +4,7 @@ import java.util.Stack;;
  * An array that tracks the placement of ingredients around the map.
  */
 public class IngredientMap {
-    private final int width = 15;
+    private final int width = 12;
     private final int height = 10;
     private Stack<Ingredient>[][] tiles;
 
