@@ -6,7 +6,7 @@ public class Game {
             Map map = new Map();                 // create the map
             MapPanel panel = new MapPanel(map);  // create the game panel
 
-            JFrame frame = new JFrame("Cooking Game");
+            JFrame frame = new JFrame("Cook or get Cooked");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.add(panel);
             frame.pack();

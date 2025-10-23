@@ -1,11 +1,11 @@
-
+import java.util.Stack;
 
 public class Player {
     private int tileX; 
     private int tileY; 
     private final int tileSize = 64;
     private Direction facing;
-    private Ingredient holdIngredient = null;
+    private Stack<Ingredient> heldStack = new Stack<>();
     private MapPanel mapPanel;
     private IngredientMap ingredientMap;
 
@@ -51,32 +51,43 @@ public class Player {
         }
     }
 
+    /**
+     * Picking up items.
+     */
     public void pickUp() {
         int frontX = mapPanel.getFrontX();
         int frontY = mapPanel.getFrontY();
-        Ingredient ingredient = ingredientMap.getTile(frontX, frontY);
+        Stack<Ingredient> stack = ingredientMap.getTileStack(frontX, frontY);
 
-        if (holdIngredient == null && ingredient != null) {
-            holdIngredient = ingredient;
-            ingredientMap.fillTile(frontX, frontY, null);
-            System.out.println("You picked up" + ingredient.getName());
-        } else if (holdIngredient != null) {
+        if (heldStack.isEmpty() && !stack.isEmpty()) {
+            heldStack.addAll(stack);
+            ingredientMap.getTileStack(frontX, frontY).clear();
+            System.out.println("You picked up: ");
+            for (Ingredient ingredient : heldStack) {
+                System.out.print(ingredient.getName() + " ");
+            }
+        } else if (heldStack != null) {
             System.out.println("You are already holding something");
-        } else if (ingredient != null) {
+        } else {
             System.out.println("there is no ingredient here");
         }
     }
 
+    /**
+     * Dropping items.
+     */
     public void drop() {
         int frontX = mapPanel.getFrontX();
         int frontY = mapPanel.getFrontY();
-        Ingredient ingredient = ingredientMap.getTile(frontX, frontY);
 
-        if (holdIngredient != null && ingredient == null) {
-            System.out.println("You dropped " + holdIngredient.getName());
-            ingredientMap.fillTile(frontX, frontY, holdIngredient);
-            holdIngredient = null;
-        } else if (holdIngredient == null) {
+        if (heldStack != null) {
+            ingredientMap.getTileStack(frontX, frontY).addAll(heldStack);
+            System.out.println("You dropped: ");
+            for (Ingredient ing : heldStack) {
+                System.out.print(ing.getName() + " ");
+            }
+            heldStack.clear();
+        } else if (heldStack == null) {
             System.out.println("You are not holding anything");
         } else {
             System.out.println("there is an ingredient already there");
@@ -96,7 +107,7 @@ public class Player {
         return tileY;
     }
 
-    public Ingredient getHeldItem() {
-        return holdIngredient;
+    public Stack<Ingredient> getHeldStack() {
+        return heldStack;
     }
 }

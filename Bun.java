@@ -1,4 +1,4 @@
-/*
+/**
  * Class for the buns in the game.
  */
 public class Bun extends Ingredient {
