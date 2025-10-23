@@ -1,6 +1,9 @@
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * main file to run the game from.
+ */
 public class Game {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

@@ -1,13 +1,22 @@
+/**
+ * Class for the map with all of the staitions and countertops.
+ */
 public class Map {
     private final int width = 12;       
     private final int height = 10;      
     private TileType[][] tiles;        
 
+    /**
+     * contructor for the map.
+     */
     public Map() {
         tiles = new TileType[height][width];
         initialize();  
     }
 
+    /**
+     * filling the map.
+     */
     private void initialize() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -32,7 +41,6 @@ public class Map {
     }
 
     public TileType getTile(int x, int y) {
-        //
         return tiles[y][x];
     }
 

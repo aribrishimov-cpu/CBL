@@ -1,5 +1,5 @@
 
-/*
+/**
  * Initializing constants for the map.
  */
 public enum TileType {

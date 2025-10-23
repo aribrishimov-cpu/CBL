@@ -1,5 +1,8 @@
 import java.util.Stack;
 
+/**
+ * class for the player.
+ */
 public class Player {
     private int tileX; 
     private int tileY; 
@@ -9,6 +12,9 @@ public class Player {
     private MapPanel mapPanel;
     private IngredientMap ingredientMap;
 
+    /**
+     * constructor for the player.
+     */
     public Player(int startX, int startY, IngredientMap ingredientMap, MapPanel mapPanel) {
         this.tileX = startX;
         this.tileY = startY;
@@ -18,6 +24,9 @@ public class Player {
     
     }
 
+    /**
+     * Player movement.
+     */
     public void move(Direction dir, Map map) {
         int newX = tileX;
         int newY = tileY;

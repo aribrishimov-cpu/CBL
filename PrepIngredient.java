@@ -1,3 +1,6 @@
+/**
+ * class for the ingredients that can be choppee but not cooked.
+ */
 public class PrepIngredient extends Ingredient {
     public PrepIngredient(String name) {
         super(name);

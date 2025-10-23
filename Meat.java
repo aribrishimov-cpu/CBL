@@ -1,3 +1,6 @@
+/**
+ * Class for meat since it can be both chopped and cooked.
+ */
 public class Meat extends Ingredient {
     public Meat(String name) {
         super(name);

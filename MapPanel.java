@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Stack;
-
 import javax.swing.*;
 
+/**
+ * everything visual regarding the map happens here.
+ */
 public class MapPanel extends JPanel {
     private final int tileSize = 64;
     private Map map;
@@ -24,6 +26,9 @@ public class MapPanel extends JPanel {
     private Image cookedMeatImg;
     private int cntr = 0;
 
+    /**
+     * constructor for the panel.
+     */
     public MapPanel(Map map) {
         this.map = map;
         this.player = new Player(5, 5, ingredientMap, this);
