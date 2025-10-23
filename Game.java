@@ -1,17 +1,24 @@
+import java.awt.*;
 import javax.swing.*;
 
 public class Game {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Map map = new Map();                 // create the map
-            MapPanel panel = new MapPanel(map);  // create the game panel
+            Map map = new Map();
+            MapPanel mapPanel = new MapPanel(map);
 
-            JFrame frame = new JFrame("Cook or get Cooked");
+            OrdersPanel ordersPanel = new OrdersPanel();
+
+            JFrame frame = new JFrame("Cooking Game");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.add(panel);
+
+            frame.getContentPane().setLayout(new BorderLayout());
+            frame.getContentPane().add(mapPanel, BorderLayout.CENTER);
+            frame.getContentPane().add(ordersPanel, BorderLayout.EAST);
+
             frame.pack();
             frame.setResizable(false);
-            frame.setLocationRelativeTo(null);   // center the window
+            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
     }
