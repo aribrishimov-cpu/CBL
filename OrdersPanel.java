@@ -4,13 +4,15 @@ import javax.swing.*;
 public class OrdersPanel extends JPanel {
     int orderPanelWidth = 300;
     int lineWidth = 5;
+    
     public OrdersPanel() {
         setPreferredSize(new Dimension(orderPanelWidth, 640)); 
         setBackground(Color.GRAY);
 
 
     }
-        @Override
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK); 

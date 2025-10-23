@@ -72,15 +72,28 @@ public class MapPanel extends JPanel {
             case KeyEvent.VK_UP -> player.move(Direction.UP, map);
             case KeyEvent.VK_DOWN -> player.move(Direction.DOWN, map);
             case KeyEvent.VK_Q -> {
+                boolean hasCutMeat = false;
                 TileType frontTile = map.getTile(frontX, frontY);
+                Stack<Ingredient> heldStack = player.getHeldStack();
+
                 if (frontTile == TileType.counterTop 
-                    || frontTile == TileType.pan
                     || frontTile == TileType.choppingBoard
                     || frontTile == TileType.orderSubmit) {
                     player.drop();
-                    ingredientMap.printTiles();
                 } else {
                     System.out.println("you cant drop this here");
+                }
+
+                for (Ingredient ing : heldStack) {
+                    if (ing.getName().contains("meat") && ing.isChopped()) {
+                        hasCutMeat = true;
+                    }
+                }
+
+                if (frontTile == TileType.pan 
+                    && heldStack.size() <= 1
+                    && hasCutMeat) {
+                    player.drop();
                 }
 
                 Stack<Ingredient> stack = ingredientMap.getTileStack(frontX, frontY);
@@ -91,21 +104,21 @@ public class MapPanel extends JPanel {
                         System.out.println(top.getName() + " is cooked");
                     }
                 }
+
+                ingredientMap.printTiles();
             }
             case KeyEvent.VK_E -> {
                 TileType frontTile = map.getTile(frontX, frontY);
                 Stack<Ingredient> frontTileStack = ingredientMap.getTileStack(frontX, frontY);
                 cntr++;
                 if (frontTile == TileType.bunBox) {                
-                    frontTileStack.push(new Bun("bun" + cntr));
+                    ingredientMap.fillTile(frontX, frontY, new Bun("bun" + cntr));
                 } else if (frontTile == TileType.meatBox) {
-                    frontTileStack.push(new Meat("meat" + cntr));
+                    ingredientMap.fillTile(frontX, frontY, new Meat("meat" + cntr));
                 } else if (frontTile == TileType.lettuceBox) {
-                    frontTileStack.push(new PrepIngredient("lettuce" 
-                        + cntr));
+                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("lettuce" + cntr));
                 } else if (frontTile == TileType.tomatoBox) {
-                    frontTileStack.push(new PrepIngredient("tomato"
-                        + cntr));
+                    ingredientMap.fillTile(frontX, frontY, new PrepIngredient("tomato" + cntr));
                     System.out.println("created");
                     for (Ingredient ing : frontTileStack) {
                         System.out.println(ing.getName());
@@ -308,7 +321,6 @@ public class MapPanel extends JPanel {
                             }
                         }
                     }
-                    default -> {}
                 }
 
                 if (heldIcon != null) {

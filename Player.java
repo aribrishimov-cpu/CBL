@@ -89,7 +89,8 @@ public class Player {
         int frontX = mapPanel.getFrontX();
         int frontY = mapPanel.getFrontY();
 
-        if (heldStack != null) {
+        if (heldStack != null 
+            && ingredientMap.getTileStack(frontX, frontY).size() + heldStack.size() <= 4) {
             ingredientMap.getTileStack(frontX, frontY).addAll(heldStack);
             System.out.println("You dropped: ");
             for (Ingredient ing : heldStack) {
@@ -99,7 +100,7 @@ public class Player {
         } else if (heldStack == null) {
             System.out.println("You are not holding anything");
         } else {
-            System.out.println("there is an ingredient already there");
+            System.out.println("you can't have more than 4 ingredients on a tile");
         }
     }
 

@@ -18,9 +18,14 @@ public class IngredientMap {
         initialFill(tiles);
     }
 
-    // Adds an ingredient on top of the stack at (i, j)
+    
+    /**
+     * Adding a Ingredinet to a stack if there aren't more than 4 ing there.
+     */
     public void fillTile(int j, int i, Ingredient ingredient) {
-        tiles[i][j].push(ingredient);
+        if (tiles[i][j].size() <= 4) {
+            tiles[i][j].push(ingredient);
+        }
     }
 
     // Returns the entire 2D stack array
