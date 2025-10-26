@@ -1,136 +1,123 @@
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
-import javax.imageio.ImageIO;
+import java.util.Stack;
 import javax.swing.*;
 
+/**
+ * Creating the pannel with the orders.
+ */
 public class OrdersPanel extends JPanel {
+    // Constants for sizes and layout
     private static final int PANEL_WIDTH = 300;
-    private static final int ORDER_COUNT = 5;
+    private static final int ORDER_COUNT = 4;
     private static final int PADDING = 12;
     private static final int BOX_PADDING = 10;
-    private static final int ICON_SIZE = 48; 
+    private static final int ICON_SIZE = 48;
 
+    // Array of orders - stored using stacks internally
+    private Order[] orders = new Order[ORDER_COUNT];
+
+    // Ingredient icons
     private Image bunImg;
     private Image tomatoImg;
     private Image lettuceImg;
-    private Image cookedMeatImg;
-    private Image choppedTomatoImg;
-    private Image choppedLettuceImg;
+    private Image meatImg;
 
-    private final java.util.List<java.util.List<String>> orders = new ArrayList<>();
-
+    /**
+     * constructor for the pannel.
+     */
     public OrdersPanel() {
+        // Panel setup (size + background color)
         setPreferredSize(new Dimension(PANEL_WIDTH, 640));
         setBackground(Color.GRAY);
 
+        // Create orders using stacks (index must start at 0)
+        orders[0] = new Order("bun", "lettuce", "meat");
+        orders[1] = new Order("bun", "lettuce", "meat", "tomato");
+        orders[2] = new Order("bun", "meat");
+        orders[3] = new Order("lettuce", "tomato");
+
         loadImages();
-        createOrders();
     }
 
+    // Loads ingredient images from file or fallback placeholders if missing
     private void loadImages() {
-        try {
-            bunImg = ImageIO.read(new File("recources\\bun.png"));
-            tomatoImg = ImageIO.read(new File("recources\\tomato.png"));
-            lettuceImg = ImageIO.read(new File("recources\\lettuce.png"));
-            cookedMeatImg = ImageIO.read(new File("recources\\cooked_steak.png"));
-            choppedTomatoImg = ImageIO.read(new File("recources\\chopped_tomato.png"));
-            choppedLettuceImg = ImageIO.read(new File("recources\\chopped_lettuce.png"));
-        } catch (IOException e) {
-            bunImg = createPlaceholderIcon("bun");
-            tomatoImg = createPlaceholderIcon("tom");
-            lettuceImg = createPlaceholderIcon("let");
-            cookedMeatImg = createPlaceholderIcon("meat");
-            choppedTomatoImg = createPlaceholderIcon("ct");
-            choppedLettuceImg = createPlaceholderIcon("cl");
-            System.err.println("OrdersPanel: error loading images: " + e.getMessage());
-        }
+        bunImg = new ImageIcon("recources\\bun.png").getImage();
+        tomatoImg = new ImageIcon("recources\\chopped_tomato.png").getImage();
+        lettuceImg = new ImageIcon("recources\\chopped_lettuce.png").getImage();
+        meatImg = new ImageIcon("recources\\cooked_steak.png").getImage();
+        
     }
-
-    private Image createPlaceholderIcon(String text) {
-        BufferedImage img = new BufferedImage(ICON_SIZE, ICON_SIZE, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = img.createGraphics();
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, 0, ICON_SIZE, ICON_SIZE);
-        g.setColor(Color.WHITE);
-        g.setFont(g.getFont().deriveFont(Font.BOLD, 12f));
-        FontMetrics fm = g.getFontMetrics();
-        String s = text;
-        int w = fm.stringWidth(s);
-        g.drawString(s, (ICON_SIZE - w) / 2, (ICON_SIZE + fm.getAscent()) / 2 - 4);
-        g.dispose();
-        return img;
-    }
-
-    private void createOrders() {
-        orders.add(Arrays.asList("bun", "cooked_meat", "chopped_lettuce"));
-
-        orders.add(Arrays.asList("bun", "cooked_meat"));
-
-        orders.add(Arrays.asList("bun", "cooked_meat", "chopped_lettuce", "chopped_tomato"));
-
-        orders.add(Arrays.asList("chopped_lettuce", "chopped_tomato"));
-
-        orders.add(Arrays.asList("bun", "cooked_meat", "chopped_lettuce"));
-    }
+    
 
     @Override
     protected void paintComponent(Graphics g0) {
         super.paintComponent(g0);
         Graphics2D g = (Graphics2D) g0.create();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
+        // Smoother icon scaling
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+        // Panel dimensions
         int panelW = getWidth();
         int panelH = getHeight();
 
+        // Calculate height for the 4 order boxes
         int available = panelH - 2 * PADDING;
         int boxH = (available - (ORDER_COUNT - 1) * PADDING) / ORDER_COUNT;
 
+        // Draw each order box
         for (int i = 0; i < ORDER_COUNT; i++) {
             int y = PADDING + i * (boxH + PADDING);
             int x = PADDING;
             int w = panelW - 2 * PADDING;
             int h = boxH;
 
+            // Background rectangle (order ticket)
             g.setColor(new Color(230, 230, 230));
             g.fillRoundRect(x, y, w, h, 8, 8);
 
+            // Border
             g.setColor(Color.DARK_GRAY);
             g.setStroke(new BasicStroke(2f));
             g.drawRoundRect(x, y, w, h, 8, 8);
 
-            java.util.List<String> order = (i < orders.size()) ? orders.get(i) : Collections.emptyList();
+            // Get the stack of ingredients from this order
+            Order order = orders[i];
+            Stack<String> stack = order.getItems();
 
-            int ingredientCount = order.size();
-            if (ingredientCount == 0) continue;
+            int ingredientCount = stack.size();
 
+            // Center the ingredient icons horizontally
             int totalIconsWidth = ingredientCount * ICON_SIZE + (ingredientCount - 1) * BOX_PADDING;
             int startX = x + (w - totalIconsWidth) / 2;
             int iconY = y + (h - ICON_SIZE) / 2;
 
-            for (int j = 0; j < order.size(); j++) {
-                String key = order.get(j);
-                Image icon = getImageForKey(key);
-                if (icon != null) {
-                    g.drawImage(icon, startX + j * (ICON_SIZE + BOX_PADDING), iconY, ICON_SIZE, ICON_SIZE, this);
-                    g.setColor(new Color(0,0,0,40));
-                    g.drawRect(startX + j * (ICON_SIZE + BOX_PADDING), iconY, ICON_SIZE, ICON_SIZE);
-                }
+            // Draw each ingredient icon in order
+            for (int j = 0; j < stack.size(); j++) {
+                String ing = stack.get(j);
+                Image icon = getImage(ing);
+
+                g.drawImage(icon, startX + j * (ICON_SIZE + BOX_PADDING), iconY,
+                        ICON_SIZE, ICON_SIZE, this);
+
+                // Draw a light border around icon
+                g.setColor(new Color(0, 0, 0, 40));
+                g.drawRect(startX + j * (ICON_SIZE + BOX_PADDING), iconY,
+                        ICON_SIZE, ICON_SIZE);
             }
         }
 
         g.dispose();
     }
 
-    private Image getImageForKey(String key) {
-        return switch (key) {
+    // Matches string keys to actual ingredient images
+    private Image getImage(String ing) {
+        return switch (ing) {
             case "bun" -> bunImg;
             case "tomato" -> tomatoImg;
             case "lettuce" -> lettuceImg;
-            case "cooked_meat" -> cookedMeatImg;
-            case "chopped_tomato" -> choppedTomatoImg;
-            case "chopped_lettuce" -> choppedLettuceImg;
+            case "meat" -> meatImg;
             default -> null;
         };
     }
