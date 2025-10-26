@@ -1,7 +1,13 @@
-import javax.swing.SwingUtilities;
+package src.core;
+
+import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import java.awt.Dimension;
+import javax.swing.SwingUtilities;
+import src.cbl.ui.MapPanel;
+import src.cbl.ui.OrdersPanel;
+import src.cbl.ui.Timer;
+
 
 /**
  * main file to run the game from.

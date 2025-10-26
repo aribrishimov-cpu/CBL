@@ -1,17 +1,23 @@
-import javax.swing.*;
-import java.awt.*;
-/**
- * Shows the game over screen.
- */
-public class GameOver {
+package src.cbl.ui;
 
-    public static void showGameOver() {
-        JFrame frame = new JFrame("Game Over");
+import java.awt.*;
+import javax.swing.*;
+
+/**
+ * Shows the victory screen if you complete the orders.
+ */
+public class Victory {
+
+    /**
+     * constructor.
+     */
+    public static void showVictory() {
+        JFrame frame = new JFrame("Victory!");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(300, 150);
         frame.setLayout(new BorderLayout());
 
-        JLabel message = new JLabel("Game Over.", SwingConstants.CENTER);
+        JLabel message = new JLabel("You Won!", SwingConstants.CENTER);
         message.setFont(new Font("Arial", Font.BOLD, 28));
         frame.add(message, BorderLayout.CENTER);
 

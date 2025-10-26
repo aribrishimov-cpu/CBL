@@ -1,4 +1,7 @@
+package src.core;
+
 import java.util.Stack;
+import src.cbl.items.Ingredient;
 
 /**
  * An array that tracks the placement of ingredients around the map.
@@ -58,21 +61,6 @@ public class IngredientMap {
         return height;
     }
 
-    /**
-     * Prints the array.
-     */
-    public void printTiles() {
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (tiles[i][j].isEmpty()) {
-                    System.out.print("null\t");
-                } else {
-                    System.out.print(tiles[i][j].peek().getName() + "\t");
-                }
-            }
-        }   
-        
-    }
 
     // Fills every position with an empty stack.
     private void initialFill(Stack<Ingredient>[][] map) {

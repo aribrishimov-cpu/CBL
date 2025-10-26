@@ -1,10 +1,19 @@
-import javax.swing.*;
-import java.awt.*;
+package src.cbl.ui;
 
+import java.awt.*;
+import javax.swing.*;
+
+/**
+ * Displays a countdown timer for the game.
+ * Stops and triggers game over when it reaches 0.
+ */
 public class Timer extends JPanel {
     private int timeLeft = 120; 
     private javax.swing.Timer swingTimer;
 
+    /**
+     * Constructor for timer.
+     */
     public Timer() {
         setOpaque(false); // transparent background
 
@@ -22,10 +31,9 @@ public class Timer extends JPanel {
         swingTimer.start();
     }
 
-/**
- * Draws the timer on the screen
- */
-
+    /**
+     * Draws the timer on the screen.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -44,10 +52,9 @@ public class Timer extends JPanel {
         g.drawString(timeStr, x, y);
     }
 
-/*
- * stops the timer after winning
- */
-
+    /*
+    * stops the timer after winning
+    */
     public void stopTimer() {
         swingTimer.stop();
     }

@@ -1,3 +1,5 @@
+package src.cbl.items;
+
 /**
  * class for the ingredients that can be choppee but not cooked.
  */

@@ -1,3 +1,8 @@
+package src.cbl.items;
+
+/**
+ * Represents an ingredient with a name, chopped, and cooked states.
+ */
 public abstract class Ingredient {
     protected String name;
     protected boolean chopped = false;

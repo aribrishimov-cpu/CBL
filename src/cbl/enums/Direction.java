@@ -1,3 +1,5 @@
+package src.cbl.enums;
+
 /**
  * constants for the facing direction.
  */

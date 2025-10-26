@@ -1,3 +1,5 @@
+package src.cbl.items;
+
 /**
  * Class for the buns in the game.
  */

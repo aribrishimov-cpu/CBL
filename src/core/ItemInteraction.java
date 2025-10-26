@@ -1,4 +1,8 @@
-/*
+package src.core;
+
+import src.cbl.items.Ingredient;
+
+/**
  * Interaction with items such as picking up, dropping off etc.
  */
 public class ItemInteraction {

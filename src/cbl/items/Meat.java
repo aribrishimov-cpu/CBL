@@ -1,3 +1,5 @@
+package src.cbl.items;
+
 /**
  * Class for meat since it can be both chopped and cooked.
  */
