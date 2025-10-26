@@ -2,6 +2,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Stack;
 import javax.swing.*;
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.awt.image.BufferedImage;
 
 /**
  * everything visual regarding the map happens here.
@@ -10,10 +13,11 @@ public class MapPanel extends JPanel {
     private final int tileSize = 64;
     private Map map;
     private Player player;
+    private OrdersPanel ordersPanel;
     private int frontX = -1;
     private int frontY = -1;
     private IngredientMap ingredientMap = new IngredientMap();
-    
+
     private Image bunImg;
     private Image tomatoImg;
     private Image lettuceImg;
@@ -29,23 +33,16 @@ public class MapPanel extends JPanel {
     /**
      * constructor for the panel.
      */
-    public MapPanel(Map map) {
+
+    public MapPanel(Map map, OrdersPanel ordersPanel) {
         this.map = map;
+        this.ordersPanel = ordersPanel;
         this.player = new Player(5, 5, ingredientMap, this);
         setPreferredSize(new Dimension(map.getWidth() * tileSize, map.getHeight() * tileSize));
         setFocusable(true);
         setRequestFocusEnabled(true);
 
-        bunImg = new ImageIcon("recources\\bun.png").getImage();
-        tomatoImg = new ImageIcon("recources\\tomato.png").getImage();
-        lettuceImg = new ImageIcon("recources\\lettuce.png").getImage();
-        meatImg = new ImageIcon("recources\\steak.png").getImage();
-        panImg = new ImageIcon("recources\\pan.png").getImage();
-        choppingImg = new ImageIcon("recources\\chopping_board.png").getImage();
-        choopedTomatoImg = new ImageIcon("recources\\chopped_tomato.png").getImage();
-        choppedLettuceImg = new ImageIcon("recources\\chopped_lettuce.png").getImage();
-        choppedMeatImg = new ImageIcon("recources\\chopped_steak.png").getImage();
-        cookedMeatImg = new ImageIcon("recources\\cooked_steak.png").getImage();
+        loadImages();
 
         addHierarchyListener(e -> {
             if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
@@ -65,6 +62,45 @@ public class MapPanel extends JPanel {
         updateFrontTile();
     }
 
+    private void loadImages() {
+        bunImg = loadImageClasspath("/recources/bun.png");
+        tomatoImg = loadImageClasspath("/recources/tomato.png");
+        lettuceImg = loadImageClasspath("/recources/lettuce.png");
+        meatImg = loadImageClasspath("/recources/steak.png");
+        panImg = loadImageClasspath("/recources/pan.png");
+        choppingImg = loadImageClasspath("/recources/chopping_board.png");
+        choopedTomatoImg = loadImageClasspath("/recources/chopped_tomato.png");
+        choppedLettuceImg = loadImageClasspath("/recources/chopped_lettuce.png");
+        choppedMeatImg = loadImageClasspath("/recources/chopped_steak.png");
+        cookedMeatImg = loadImageClasspath("/recources/cooked_steak.png");
+    }
+
+    private Image loadImageClasspath(String resourcePath) {
+        try {
+            java.net.URL url = getClass().getResource(resourcePath);
+            System.out.println("MapPanel: getResource(" + resourcePath + ") -> " + url);
+            if (url == null) {
+                System.err.println("MapPanel: resource NOT found: " + resourcePath);
+                return createPlaceholder(48, 48);
+            }
+            return ImageIO.read(url);
+        } catch (IOException e) {
+            System.err.println("MapPanel: error loading " + resourcePath + ": " + e.getMessage());
+            return createPlaceholder(48, 48);
+        }
+    }
+
+    private Image createPlaceholder(int w, int h) {
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setColor(Color.DARK_GRAY);
+        g.fillRect(0, 0, w, h);
+        g.setColor(Color.WHITE);
+        g.drawString("?", w/3, h/2 + 4);
+        g.dispose();
+        return img;
+    }
+
     private void handleKey(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_LEFT -> player.move(Direction.LEFT, map);
@@ -72,25 +108,33 @@ public class MapPanel extends JPanel {
             case KeyEvent.VK_UP -> player.move(Direction.UP, map);
             case KeyEvent.VK_DOWN -> player.move(Direction.DOWN, map);
             case KeyEvent.VK_Q -> {
-                boolean hasCutMeat = false;
                 TileType frontTile = map.getTile(frontX, frontY);
                 Stack<Ingredient> heldStack = player.getHeldStack();
 
-                if (frontTile == TileType.counterTop 
-                    || frontTile == TileType.choppingBoard
-                    || frontTile == TileType.orderSubmit) {
+        if (frontTile == TileType.orderSubmit) {
+            if (heldStack != null && !heldStack.isEmpty()) {
+                boolean success = ordersPanel.trySubmit(heldStack);
+                    if (success) {
+                player.clearHeldStack();
+            }
+        }
+        break;
+}
+
+                if (frontTile == TileType.counterTop || frontTile == TileType.choppingBoard) {
                     player.drop();
                 } else {
-                    System.out.println("you cant drop this here");
+                    System.out.println("you can't drop this here");
                 }
 
+                boolean hasCutMeat = false;
                 for (Ingredient ing : heldStack) {
                     if (ing.getName().contains("meat") && ing.isChopped()) {
                         hasCutMeat = true;
                     }
                 }
 
-                if (frontTile == TileType.pan 
+                if (frontTile == TileType.pan
                     && heldStack.size() <= 1
                     && hasCutMeat) {
                     player.drop();
@@ -98,7 +142,7 @@ public class MapPanel extends JPanel {
 
                 Stack<Ingredient> stack = ingredientMap.getTileStack(frontX, frontY);
                 if (frontTile == TileType.pan && !stack.isEmpty()) {
-                    Ingredient top = stack.peek(); // Cook top ingredient
+                    Ingredient top = stack.peek(); 
                     top.cook();
                     if (top.isCooked()) {
                         System.out.println(top.getName() + " is cooked");
@@ -111,7 +155,7 @@ public class MapPanel extends JPanel {
                 TileType frontTile = map.getTile(frontX, frontY);
                 Stack<Ingredient> frontTileStack = ingredientMap.getTileStack(frontX, frontY);
                 cntr++;
-                if (frontTile == TileType.bunBox) {                
+                if (frontTile == TileType.bunBox) {
                     ingredientMap.fillTile(frontX, frontY, new Bun("bun" + cntr));
                 } else if (frontTile == TileType.meatBox) {
                     ingredientMap.fillTile(frontX, frontY, new Meat("meat" + cntr));
@@ -124,7 +168,7 @@ public class MapPanel extends JPanel {
                         System.out.println(ing.getName());
                     }
                 }
-                player.pickUp();  
+                player.pickUp();
                 ingredientMap.printTiles();
             }
             case KeyEvent.VK_SPACE -> {
@@ -136,9 +180,8 @@ public class MapPanel extends JPanel {
                     if (top.isChopped()) {
                         System.out.println(top.getName() + " is now chopped!");
                     }
-                } 
+                }
             }
-
         }
     }
 
@@ -154,12 +197,12 @@ public class MapPanel extends JPanel {
         }
     }
 
-    public int getFrontX() { 
-        return frontX; 
-    }    
+    public int getFrontX() {
+        return frontX;
+    }
 
-    public int getFrontY() { 
-        return frontY; 
+    public int getFrontY() {
+        return frontY;
     }
 
     @Override
@@ -219,7 +262,7 @@ public class MapPanel extends JPanel {
                 Stack<Ingredient> stack = ingredientMap.getTileStack(x, y);
 
                 if (stack != null && !stack.isEmpty()) {
-                    int iconSize = (int) (tileSize * 0.4); // smaller so multiple fit
+                    int iconSize = (int) (tileSize * 0.4); 
                     int padding = 2;
 
                     int i = 0;
@@ -260,7 +303,7 @@ public class MapPanel extends JPanel {
                             // draw in tile corners
                             int offsetX = padding + (i % 2) * (tileSize / 2);
                             int offsetY = padding + (i / 2) * (tileSize / 2);
-                            g.drawImage(ingredientIcon, x * tileSize + offsetX, y * tileSize 
+                            g.drawImage(ingredientIcon, x * tileSize + offsetX, y * tileSize
                                 + offsetY, iconSize, iconSize, this);
                             i++;
                         }
@@ -268,7 +311,6 @@ public class MapPanel extends JPanel {
                 }
             }
         }
-
 
         // Highlight the tile in front of the player
         g.setColor(new Color(255, 255, 0, 128));
@@ -282,10 +324,9 @@ public class MapPanel extends JPanel {
         g.fillRect(px, py, playerSize, playerSize);
 
         // Draw held item above the player
-        // Draw held stack above the player
         Stack<Ingredient> heldStack = player.getHeldStack();
         if (heldStack != null && !heldStack.isEmpty()) {
-            int iconSize = 20; // smaller so multiple items fit
+            int iconSize = 20; 
             int padding = 2;
 
             int i = 0;
@@ -331,6 +372,5 @@ public class MapPanel extends JPanel {
                 }
             }
         }
-
     }
 }

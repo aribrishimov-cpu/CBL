@@ -1,5 +1,7 @@
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import java.awt.Dimension;
 
 /**
  * main file to run the game from.
@@ -8,21 +10,33 @@ public class Game {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Map map = new Map();
-            MapPanel mapPanel = new MapPanel(map);
-
-            OrdersPanel ordersPanel = new OrdersPanel();
+            OrdersPanel ordersPanel = new OrdersPanel();    
+            MapPanel mapPanel = new MapPanel(map, ordersPanel);
+            Timer timerPanel = new Timer();
 
             JFrame frame = new JFrame("Cooking Game");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            frame.getContentPane().setLayout(new BorderLayout());
-            frame.getContentPane().add(mapPanel, BorderLayout.CENTER);
-            frame.getContentPane().add(ordersPanel, BorderLayout.EAST);
+            JLayeredPane layeredPane = new JLayeredPane();
+            int width = map.getWidth() * 64;   
+            int height = map.getHeight() * 64;
+            layeredPane.setPreferredSize(new Dimension(width, height));
+
+            mapPanel.setBounds(0, 0, width, height);
+            layeredPane.add(mapPanel, Integer.valueOf(0));
+
+            timerPanel.setBounds(0, 0, width, height);
+            layeredPane.add(timerPanel, Integer.valueOf(1));
+
+            frame.getContentPane().setLayout(new java.awt.BorderLayout());
+            frame.getContentPane().add(layeredPane, java.awt.BorderLayout.CENTER);
+            frame.getContentPane().add(ordersPanel, java.awt.BorderLayout.EAST);
 
             frame.pack();
             frame.setResizable(false);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+            
         });
     }
 }

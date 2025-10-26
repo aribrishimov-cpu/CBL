@@ -1,4 +1,4 @@
-import java.util.Stack;;
+import java.util.Stack;
 
 /**
  * An array that tracks the placement of ingredients around the map.

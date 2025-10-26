@@ -4,8 +4,8 @@ import java.util.Stack;
  * class for the player.
  */
 public class Player {
-    private int tileX; 
-    private int tileY; 
+    private int tileX;
+    private int tileY;
     private final int tileSize = 64;
     private Direction facing;
     private Stack<Ingredient> heldStack = new Stack<>();
@@ -21,7 +21,6 @@ public class Player {
         this.facing = Direction.DOWN;
         this.ingredientMap = ingredientMap;
         this.mapPanel = mapPanel;
-    
     }
 
     /**
@@ -75,7 +74,8 @@ public class Player {
             for (Ingredient ingredient : heldStack) {
                 System.out.print(ingredient.getName() + " ");
             }
-        } else if (heldStack != null) {
+            System.out.println();
+        } else if (!heldStack.isEmpty()) {
             System.out.println("You are already holding something");
         } else {
             System.out.println("there is no ingredient here");
@@ -89,22 +89,28 @@ public class Player {
         int frontX = mapPanel.getFrontX();
         int frontY = mapPanel.getFrontY();
 
-        if (heldStack != null 
+        if (!heldStack.isEmpty()
             && ingredientMap.getTileStack(frontX, frontY).size() + heldStack.size() <= 4) {
             ingredientMap.getTileStack(frontX, frontY).addAll(heldStack);
             System.out.println("You dropped: ");
             for (Ingredient ing : heldStack) {
                 System.out.print(ing.getName() + " ");
             }
+            System.out.println();
             heldStack.clear();
-        } else if (heldStack == null) {
+        } else if (heldStack.isEmpty()) {
             System.out.println("You are not holding anything");
         } else {
             System.out.println("you can't have more than 4 ingredients on a tile");
         }
     }
 
-    //Getters
+    // Clear player's held stack (used when an order is successfully submitted)
+    public void clearHeldStack() {
+        heldStack.clear();
+    }
+
+    // Getters
     public Direction getFacing() {
         return facing;
     }
