@@ -20,7 +20,7 @@ public class IngredientMap {
 
     
     /**
-     * Adding a Ingredinet to a stack if there aren't more than 4 ing there.
+     * Adding a Ingredint to a stack if there aren't more than 4 ing there.
      */
     public void fillTile(int j, int i, Ingredient ingredient) {
         if (tiles[i][j].size() <= 4) {
@@ -48,6 +48,10 @@ public class IngredientMap {
      */
     public Stack<Ingredient> getTileStack(int j, int i) {
         return tiles[i][j];
+    }
+
+    public void emptyTileStack(int j, int i) {
+        tiles[i][j].clear();
     }
 
     public int getWidth() {

@@ -6,7 +6,6 @@ import java.util.Stack;
 public class Player {
     private int tileX; 
     private int tileY; 
-    private final int tileSize = 64;
     private Direction facing;
     private Stack<Ingredient> heldStack = new Stack<>();
     private MapPanel mapPanel;
@@ -36,19 +35,15 @@ public class Player {
         switch (dir) {
             case UP -> {
                 newY--;
-                System.out.println("up");
             }
             case DOWN -> {
                 newY++;
-                System.out.println("down");
             }
             case LEFT -> {
                 newX--;
-                System.out.println("left");
             }
             case RIGHT -> {
                 newX++;
-                System.out.println("right");
             }
         }
 

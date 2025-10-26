@@ -9,10 +9,12 @@ import javax.swing.*;
 public class MapPanel extends JPanel {
     private final int tileSize = 64;
     private Map map;
+    private OrdersPanel ordersPanel;
     private Player player;
     private int frontX = -1;
     private int frontY = -1;
-    private IngredientMap ingredientMap = new IngredientMap();
+    private IngredientMap ingredientMap;
+    private SubmitStation submitStation;
     
     private Image bunImg;
     private Image tomatoImg;
@@ -25,12 +27,18 @@ public class MapPanel extends JPanel {
     private Image choppedMeatImg;
     private Image cookedMeatImg;
     private int cntr = 0;
+    
 
     /**
      * constructor for the panel.
      */
-    public MapPanel(Map map) {
+    public MapPanel(Map map, OrdersPanel ordersPanel, 
+        SubmitStation submitStation, IngredientMap ingredientMap) {
+
         this.map = map;
+        this.ordersPanel = ordersPanel;
+        this.ingredientMap = ingredientMap;
+        this.submitStation = submitStation;
         this.player = new Player(5, 5, ingredientMap, this);
         setPreferredSize(new Dimension(map.getWidth() * tileSize, map.getHeight() * tileSize));
         setFocusable(true);
@@ -72,6 +80,7 @@ public class MapPanel extends JPanel {
             case KeyEvent.VK_UP -> player.move(Direction.UP, map);
             case KeyEvent.VK_DOWN -> player.move(Direction.DOWN, map);
             case KeyEvent.VK_Q -> {
+                System.out.println("");
                 boolean hasCutMeat = false;
                 TileType frontTile = map.getTile(frontX, frontY);
                 Stack<Ingredient> heldStack = player.getHeldStack();
@@ -84,6 +93,11 @@ public class MapPanel extends JPanel {
                     System.out.println("you cant drop this here");
                 }
 
+                if (frontTile == TileType.orderSubmit) {
+                    // ✅ only check the FIRST active order now
+                    submitStation.checkSubmittingTile(ordersPanel);
+                }
+
                 for (Ingredient ing : heldStack) {
                     if (ing.getName().contains("meat") && ing.isChopped()) {
                         hasCutMeat = true;
@@ -94,6 +108,7 @@ public class MapPanel extends JPanel {
                     && heldStack.size() <= 1
                     && hasCutMeat) {
                     player.drop();
+
                 }
 
                 Stack<Ingredient> stack = ingredientMap.getTileStack(frontX, frontY);
@@ -104,13 +119,14 @@ public class MapPanel extends JPanel {
                         System.out.println(top.getName() + " is cooked");
                     }
                 }
-
+                System.out.println("");
                 ingredientMap.printTiles();
             }
             case KeyEvent.VK_E -> {
                 TileType frontTile = map.getTile(frontX, frontY);
                 Stack<Ingredient> frontTileStack = ingredientMap.getTileStack(frontX, frontY);
                 cntr++;
+                System.out.println("");
                 if (frontTile == TileType.bunBox) {                
                     ingredientMap.fillTile(frontX, frontY, new Bun("bun" + cntr));
                 } else if (frontTile == TileType.meatBox) {
@@ -124,7 +140,8 @@ public class MapPanel extends JPanel {
                         System.out.println(ing.getName());
                     }
                 }
-                player.pickUp();  
+                player.pickUp();
+                System.out.println("");
                 ingredientMap.printTiles();
             }
             case KeyEvent.VK_SPACE -> {
@@ -137,6 +154,7 @@ public class MapPanel extends JPanel {
                         System.out.println(top.getName() + " is now chopped!");
                     }
                 } 
+                System.out.println("");
             }
 
         }
